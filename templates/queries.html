@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}查询中心 - 大连理工大学跳蚤市场{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="section-header">
+    <div>
+      <p class="eyebrow">Search Center</p>
+      <h2>查询中心</h2>
+    </div>
+  </div>
+  <form method="get" class="query-form">
+    <label>类别
+      <select name="category">
+        <option value="">全部类别</option>
+        {% for value, label in category_labels.items() %}
+        <option value="{{ value }}" {% if selected_filters.category == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>卖家
+      <select name="seller_id">
+        <option value="">全部卖家</option>
+        {% for seller in sellers %}
+        <option value="{{ seller.user_id }}" {% if selected_filters.seller_id == seller.user_id %}selected{% endif %}>
+          {{ seller.user_name }}（{{ seller.user_id }}）
+        </option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>状态
+      <select name="status">
+        <option value="">全部状态</option>
+        <option value="0" {% if selected_filters.status == '0' %}selected{% endif %}>在售</option>
+        <option value="1" {% if selected_filters.status == '1' %}selected{% endif %}>已售</option>
+      </select>
+    </label>
+    <label>最低价<input type="number" step="0.01" min="0" name="min_price" value="{{ selected_filters.min_price }}"></label>
+    <label>最高价<input type="number" step="0.01" min="0" name="max_price" value="{{ selected_filters.max_price }}"></label>
+    <button class="button" type="submit">查询</button>
+  </form>
+</section>
+
+<section class="card">
+  <h3>商品检索结果</h3>
+  <table>
+    <thead><tr><th>ID</th><th>商品名</th><th>类别</th><th>价格</th><th>状态</th><th>卖家</th></tr></thead>
+    <tbody>
+      {% for row in custom_items %}
+      <tr>
+        <td>{{ row.item_id }}</td>
+        <td>{{ row.item_name }}</td>
+        <td>{{ category_label(row.category) }}</td>
+        <td>¥{{ '%.2f'|format(row.price) }}</td>
+        <td>{{ status_labels[row.status] }}</td>
+        <td>{{ row.seller_name }}（{{ row.seller_id }}）</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="empty-cell">没有符合条件的商品</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <h3>类别分布</h3>
+    <table>
+      <thead><tr><th>类别</th><th>商品数</th></tr></thead>
+      <tbody>
+        {% for row in category_counts %}
+        <tr><td>{{ category_label(row.category) }}</td><td>{{ row.category_count }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h3>买家交易概览</h3>
+    <table>
+      <thead><tr><th>买家</th><th>订单数</th><th>消费金额</th></tr></thead>
+      <tbody>
+        {% for row in buyer_orders %}
+        <tr><td>{{ row.buyer_name }}</td><td>{{ row.order_count }}</td><td>¥{{ '%.2f'|format(row.total_spent) }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<section class="card">
+  <h3>已售商品与买家</h3>
+  <table>
+    <thead><tr><th>商品 ID</th><th>商品名</th><th>买家姓名</th></tr></thead>
+    <tbody>
+      {% for row in join_sold_buyer %}
+      <tr><td>{{ row.item_id }}</td><td>{{ row.item_name }}</td><td>{{ row.buyer_name }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <h3>订单明细</h3>
+    <table>
+      <thead><tr><th>订单号</th><th>商品名</th><th>买家名</th><th>日期</th></tr></thead>
+      <tbody>
+        {% for row in join_order_detail %}
+        <tr><td>{{ row.order_id }}</td><td>{{ row.item_name }}</td><td>{{ row.buyer_name }}</td><td>{{ row.order_date }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h3>卖家商品成交状态</h3>
+    <table>
+      <thead><tr><th>商品 ID</th><th>商品名</th><th>状态</th><th>买家</th></tr></thead>
+      <tbody>
+        {% for row in item_purchase_status %}
+        <tr><td>{{ row.item_id }}</td><td>{{ row.item_name }}</td><td>{{ row.purchase_status }}</td><td>{{ row.buyer_name }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

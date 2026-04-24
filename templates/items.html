@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% block title %}商品列表 - 大连理工大学跳蚤市场{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="section-header">
+    <div>
+      <p class="eyebrow">Marketplace</p>
+      <h2>商品列表</h2>
+    </div>
+    <div class="quick-links">
+      <details class="publish-popover">
+        <summary class="button plus-button">+ 发布商品</summary>
+        <div class="publish-panel">
+          <h3>发布商品</h3>
+          <form method="post" action="{{ url_for('add_item') }}" class="form-stack">
+            <label>商品名<input name="item_name" placeholder="例如 羽毛球拍" required></label>
+            <label>类别
+              <select name="category" required>
+                {% for value, label in category_labels.items() %}
+                <option value="{{ value }}" {% if value == 'Sports' %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>价格<input type="number" step="0.01" min="0" name="price" placeholder="66" required></label>
+            {% if current_user.role == 'admin' %}
+            <label>卖家
+              <select name="seller_id" required>
+                {% for user in users %}
+                <option value="{{ user.user_id }}">{{ user.user_name }}（{{ user.user_id }}）</option>
+                {% endfor %}
+              </select>
+            </label>
+            {% endif %}
+            <button class="button" type="submit">确认发布</button>
+          </form>
+        </div>
+      </details>
+      {% if current_user.role == 'admin' %}
+      <a class="button ghost" href="{{ url_for('queries_page') }}">打开查询中心</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="item-grid">
+    {% for item in items %}
+    <article class="item-card">
+      <div class="item-card-main">
+        <div>
+          <span class="badge {% if item.status == 1 %}sold{% else %}unsold{% endif %}">
+            {{ status_labels[item.status] }}
+          </span>
+          <h3>{{ item.item_name }}</h3>
+          <p class="muted">{{ category_label(item.category) }} · 卖家 {{ item.seller_name }}</p>
+        </div>
+        <div class="price">¥{{ '%.2f'|format(item.price) }}</div>
+      </div>
+      <div class="item-meta">
+        <span>编号 {{ item.item_id }}</span>
+        {% if item.buyer_name %}
+        <span>买家 {{ item.buyer_name }}</span>
+        {% endif %}
+      </div>
+
+      {% if current_user.role == 'admin' and item.status == 0 %}
+      <div class="admin-item-actions">
+        <form method="post" action="{{ url_for('update_price') }}" class="inline-form">
+          <input type="hidden" name="item_id" value="{{ item.item_id }}">
+          <input class="compact-input" type="number" step="0.01" min="0" name="new_price" value="{{ '%.2f'|format(item.price) }}" required>
+          <button class="button ghost" type="submit">改价</button>
+        </form>
+        <form method="post" action="{{ url_for('delete_item') }}">
+          <input type="hidden" name="item_id" value="{{ item.item_id }}">
+          <button class="button danger" type="submit">下架</button>
+        </form>
+      </div>
+      {% endif %}
+
+      {% if item.status == 0 and item.seller_id != current_user.user_id %}
+      <form method="post" action="{{ url_for('purchase_item') }}" class="inline-form">
+        <input type="hidden" name="item_id" value="{{ item.item_id }}">
+        {% if current_user.role == 'admin' %}
+        <select name="buyer_id" required>
+          {% for user in users %}
+          {% if user.user_id != item.seller_id %}
+          <option value="{{ user.user_id }}">{{ user.user_name }}（{{ user.user_id }}）</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+        {% endif %}
+        <button class="button" type="submit">立即购买</button>
+      </form>
+      {% elif item.status == 0 %}
+      <p class="hint">这是你发布的商品。</p>
+      {% else %}
+      <p class="hint">成交日期：{{ item.order_date or '-' }}</p>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+{% if current_user.role != 'admin' %}
+<section class="card">
+  <div class="section-header">
+    <div>
+      <p class="eyebrow">My Listings</p>
+      <h2>我发布的商品</h2>
+    </div>
+  </div>
+  <div class="my-listings">
+    {% set ns = namespace(count=0) %}
+    {% for item in items %}
+    {% if item.seller_id == current_user.user_id %}
+    {% set ns.count = ns.count + 1 %}
+    <article class="listing-row">
+      <div>
+        <strong>{{ item.item_name }}</strong>
+        <p class="muted">编号 {{ item.item_id }} · {{ category_label(item.category) }} · {{ status_labels[item.status] }}</p>
+      </div>
+      <div class="price small">¥{{ '%.2f'|format(item.price) }}</div>
+      {% if item.status == 0 %}
+      <form method="post" action="{{ url_for('update_price') }}" class="inline-form">
+        <input type="hidden" name="item_id" value="{{ item.item_id }}">
+        <input class="compact-input" type="number" step="0.01" min="0" name="new_price" value="{{ '%.2f'|format(item.price) }}" required>
+        <button class="button ghost" type="submit">改价</button>
+      </form>
+      <form method="post" action="{{ url_for('delete_item') }}">
+        <input type="hidden" name="item_id" value="{{ item.item_id }}">
+        <button class="button danger" type="submit">下架</button>
+      </form>
+      {% else %}
+      <span class="hint">已成交给 {{ item.buyer_name or '-' }}</span>
+      {% endif %}
+    </article>
+    {% endif %}
+    {% endfor %}
+    {% if ns.count == 0 %}
+    <p class="empty-cell">你还没有发布商品。</p>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

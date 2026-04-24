@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}统计与视图 - 大连理工大学跳蚤市场{% endblock %}
+{% block content %}
+<section class="card">
+  <p class="eyebrow">Analytics</p>
+  <h2>平台统计</h2>
+</section>
+
+<div class="stats-grid">
+  <article class="stat-card card">
+    <div class="stat-label">商品总数</div>
+    <div class="stat-value">{{ total_items.total_items }}</div>
+  </article>
+  <article class="stat-card card">
+    <div class="stat-label">平均价格</div>
+    <div class="stat-value">¥{{ avg_price.avg_price }}</div>
+  </article>
+  <article class="stat-card card wide card-chart">
+    <div class="stat-label">发布商品数量最多的用户</div>
+    <div class="big-inline">{{ top_seller.user_name }}（{{ top_seller.user_id }}）</div>
+    <div class="muted">共发布 {{ top_seller.item_count }} 件商品</div>
+  </article>
+</div>
+
+<section class="card">
+  <h3>各类商品数量</h3>
+  <table>
+    <thead><tr><th>类别</th><th>数量</th></tr></thead>
+    <tbody>
+      {% for row in category_counts %}
+      <tr><td>{{ category_label(row.category) }}</td><td>{{ row.category_count }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="card">
+  <p class="eyebrow">Views</p>
+  <h2>商品状态视图</h2>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <h3>已售商品</h3>
+    <table>
+      <thead><tr><th>商品 ID</th><th>商品名</th><th>买家 ID</th><th>订单日期</th></tr></thead>
+      <tbody>
+        {% for row in sold_view %}
+        <tr><td>{{ row.item_id }}</td><td>{{ row.item_name }}</td><td>{{ row.buyer_id }}</td><td>{{ row.order_date }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h3>在售商品</h3>
+    <table>
+      <thead><tr><th>商品 ID</th><th>商品名</th><th>类别</th><th>价格</th><th>卖家 ID</th></tr></thead>
+      <tbody>
+        {% for row in unsold_view %}
+        <tr><td>{{ row.item_id }}</td><td>{{ row.item_name }}</td><td>{{ category_label(row.category) }}</td><td>{{ row.price }}</td><td>{{ row.seller_id }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

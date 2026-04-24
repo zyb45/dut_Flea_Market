@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}登录 - 大连理工大学跳蚤市场{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <article class="auth-panel">
+    <p class="eyebrow">Welcome Back</p>
+    <h2>登录跳蚤市场</h2>
+    <form method="post" class="form-stack" autocomplete="off">
+      <label>账号<input name="user_id" placeholder="请输入账号" autocomplete="username" required></label>
+      <label>密码<input type="password" name="password" placeholder="请输入密码" autocomplete="current-password" required></label>
+      <button class="button" type="submit">登录</button>
+    </form>
+    <p class="hint">管理员演示账号：admin / admin。普通用户初始密码为 123456。</p>
+    <a class="text-link" href="{{ url_for('register') }}">注册普通用户</a>
+  </article>
+</section>
+{% endblock %}

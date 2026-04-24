@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}用户列表 - 大连理工大学跳蚤市场{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="section-header">
+    <div>
+      <p class="eyebrow">Users</p>
+      <h2>用户管理</h2>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>用户 ID</th>
+        <th>用户名</th>
+        <th>角色</th>
+        <th>手机号</th>
+        <th>发布商品数</th>
+        <th>已售数</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.user_id }}</td>
+        <td>{{ user.user_name }}</td>
+        <td>{{ '管理员' if user.role == 'admin' else '普通用户' }}</td>
+        <td>{{ user.phone }}</td>
+        <td>{{ user.published_count }}</td>
+        <td>{{ user.sold_count or 0 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

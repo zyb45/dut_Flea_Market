@@ -1,0 +1,33 @@
+# Python 虚拟环境
+.venv/
+venv/
+env/
+ENV/
+
+# VS Code 配置
+.vscode/
+
+# Python 缓存文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 本地数据库与运行时文件
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# 系统与编辑器临时文件
+.DS_Store
+Thumbs.db
+~$*
+.~*
+*.tmp
+
+# Codex / 本地工具状态
+.codex
+
+# 也可以忽略 .env 文件（如果有敏感信息）
+.env

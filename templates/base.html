@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}大连理工大学跳蚤市场{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand-link" href="https://www.dlut.edu.cn/" target="_blank" rel="noopener noreferrer" title="访问大连理工大学官网">
+        <img class="dlut-logo" src="{{ url_for('static', filename='dlut-logo.svg') }}" alt="大连理工大学">
+        <span class="brand-text">
+          <span class="eyebrow">DUT Flea Market</span>
+          <span class="site-title">大连理工大学跳蚤市场</span>
+        </span>
+      </a>
+      {% if current_user %}
+      <div class="header-actions">
+        <div class="account-pill">
+          {{ current_user.user_name }}
+          <span>{{ '管理员' if current_user.role == 'admin' else '普通用户' }}</span>
+        </div>
+        <form method="post" action="{{ url_for('logout') }}">
+          <button class="button ghost" type="submit">退出</button>
+        </form>
+        {% if current_user.role == 'admin' %}
+      <form method="post" action="{{ url_for('reset_db') }}">
+        <button class="button ghost" type="submit">重置数据库</button>
+      </form>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <nav class="main-nav">
+    <div class="container nav-wrap">
+      {% if current_user %}
+      <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">首页</a>
+      <a href="{{ url_for('items') }}" class="nav-link {% if request.endpoint == 'items' %}active{% endif %}">商品列表</a>
+      {% if current_user.role == 'admin' %}
+      <a href="{{ url_for('users') }}" class="nav-link {% if request.endpoint == 'users' %}active{% endif %}">用户列表</a>
+      {% endif %}
+      <a href="{{ url_for('orders') }}" class="nav-link {% if request.endpoint == 'orders' %}active{% endif %}">订单列表</a>
+      {% if current_user.role == 'admin' %}
+      <a href="{{ url_for('queries_page') }}" class="nav-link {% if request.endpoint == 'queries_page' %}active{% endif %}">查询中心</a>
+      <a href="{{ url_for('analytics') }}" class="nav-link {% if request.endpoint == 'analytics' %}active{% endif %}">统计与视图</a>
+      {% endif %}
+      {% else %}
+      <a href="{{ url_for('login') }}" class="nav-link {% if request.endpoint == 'login' %}active{% endif %}">登录</a>
+      <a href="{{ url_for('register') }}" class="nav-link {% if request.endpoint == 'register' %}active{% endif %}">注册</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main class="container page-content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

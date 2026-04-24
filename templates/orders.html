@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}订单列表 - 大连理工大学跳蚤市场{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="section-header">
+    <div>
+      <p class="eyebrow">Orders</p>
+      <h2>{{ '全站订单' if current_user.role == 'admin' else '我的订单' }}</h2>
+    </div>
+    <a class="button ghost" href="{{ url_for('items') }}">去商品列表购买</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>订单号</th>
+        <th>商品</th>
+        <th>类别</th>
+        <th>买家</th>
+        <th>卖家</th>
+        <th>价格</th>
+        <th>日期</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.order_id }}</td>
+        <td>{{ order.item_name }}（{{ order.item_id }}）</td>
+        <td>{{ category_label(order.category) }}</td>
+        <td>{{ order.buyer_name }}（{{ order.buyer_id }}）</td>
+        <td>{{ order.seller_name }}（{{ order.seller_id }}）</td>
+        <td>¥{{ '%.2f'|format(order.price) }}</td>
+        <td>{{ order.order_date }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="empty-cell">还没有订单记录</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
