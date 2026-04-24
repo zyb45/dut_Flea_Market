@@ -2,6 +2,15 @@
 
 这是一个面向校内二手交易场景的数据库课程项目，使用 **Flask + SQLite + HTML/CSS** 实现。项目重点展示关系模型设计、完整性约束、触发器、视图、事务处理以及围绕二手交易业务的增删改查流程。
 
+## 技术栈
+
+- **后端**：Flask (Python Web 框架)
+- **数据库**：SQLite (关系型数据库)
+- **前端**：HTML5, CSS3, Bootstrap (响应式设计)
+- **部署**：Render (云平台)
+- **版本控制**：Git
+- **包管理**：pip
+
 ## 项目结构
 
 ```
@@ -32,7 +41,10 @@ campus-market-db/
     ├── queries.html       # 查询页面
     ├── register.html      # 注册页面
     └── users.html         # 用户管理页面
-```
+## 文档
+
+- **视频录制建议**：`docs/视频录制建议.md`
+- **截图**：`docs/screenshots/` (包含项目界面截图)
 
 ## 功能概览
 
@@ -109,6 +121,14 @@ campus-market-db/
 
 部署后访问 Render 分配的 URL，首次请求会自动初始化 SQLite 数据库。免费实例的磁盘不是长期持久化存储，如果服务休眠或重建，演示数据可能恢复为 `sql/seed.sql` 中的初始数据；课程演示场景下通常可以接受。
 
+### 在线演示
+
+项目已部署在 Render 上，可通过以下链接访问：
+
+- **登录页面**：https://campus-market-db-demo.onrender.com/login
+- **管理员账号**：`admin` / `admin`
+- **普通用户**：注册新账号或使用初始数据中的用户
+
 ## 一键重置
 
 页面右上角有“重置数据库”按钮，便于重复演示。
@@ -132,24 +152,3 @@ campus-market-db/
 ## 许可证
 
 本项目仅用于教学演示目的，不得用于商业用途。
-
-## 仓库提交建议
-
-应提交的内容包括：
-
-- `app.py`
-- `requirements.txt`
-- `render.yaml`
-- `sql/`
-- `static/`
-- `templates/`
-- `docs/` 中正式文档
-- `README.md`
-
-不应提交的内容包括：
-
-- `.venv/`
-- `.vscode/`
-- `__pycache__/`
-- `campus_market.db`
-- `.env`
